@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log*
+
+# SQLite 运行时数据（用 npm run seed 生成）
+data/*.db
+data/*.db-shm
+data/*.db-wal
+
+*.log
+.DS_Store
+.vscode/
+.idea/

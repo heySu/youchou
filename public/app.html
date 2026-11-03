@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B6E5F">
+<title>有酬 · 答题赚佣金</title>
+<style>
+:root{
+  --bg:#F4F6F8; --surface:#fff;
+  --ink:#0C1A1D; --ink2:#586A70; --ink3:#8FA0A6;
+  --line:#E6EDF0;
+  --brand:#0B6E5F; --brand2:#119C82; --brand-soft:#E8F5F1;
+  --money:#B45309; --money-soft:#FDF4E7;
+  --danger:#C6403A; --danger-soft:#FCEDEC; --ok:#0E8A6A;
+  --shadow-sm:0 1px 2px rgba(12,26,29,.05);
+  --shadow-md:0 2px 6px rgba(12,26,29,.05),0 16px 32px -20px rgba(12,26,29,.22);
+  --r:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;padding:0}
+button:disabled{cursor:not-allowed}
+h1,h2,h3{margin:0;font-weight:600}
+p{margin:0}
+[hidden]{display:none !important}
+
+.shell{display:flex;min-height:100vh}
+.rail{
+  width:244px;flex:0 0 244px;background:#fff;border-right:1px solid var(--line);
+  padding:24px 16px;position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;gap:6px;
+}
+.brand{display:flex;align-items:center;gap:11px;padding:4px 8px 20px}
+.logo{
+  width:38px;height:38px;border-radius:11px;flex:0 0 38px;
+  background:linear-gradient(140deg,#0A3B35,#0E8A76);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:17px;letter-spacing:-.5px;
+  box-shadow:0 6px 14px -8px rgba(11,110,95,.9);
+}
+.brand b{display:block;font-size:16px;letter-spacing:.5px}
+.brand span{font-size:11.5px;color:var(--ink3);letter-spacing:.3px}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:11px 13px;border-radius:12px;
+  color:var(--ink2);font-weight:500;font-size:14.5px;transition:.16s;width:100%;text-align:left;
+}
+.nav-item:hover{background:#F5F8F8;color:var(--ink)}
+.nav-item.on{background:var(--brand-soft);color:var(--brand);font-weight:600}
+.nav-item .ico{width:18px;height:18px;display:grid;place-items:center;opacity:.9}
+.nav-item .ico svg{width:18px;height:18px;display:block}
+.rail-foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3)}
+.rail-foot a{color:var(--brand);text-decoration:none;font-weight:600}
+
+.main{flex:1;min-width:0;display:flex;justify-content:center}
+.wrap{width:100%;max-width:880px;padding:30px 34px 80px}
+
+.mtop{display:none;align-items:center;justify-content:space-between;margin-bottom:14px}
+.mtop .brand{padding:0}
+.mtop .brand .logo{width:32px;height:32px;flex:0 0 32px;font-size:15px}
+.balance-chip{
+  display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);
+  padding:7px 12px;border-radius:999px;font-size:13px;font-weight:600;box-shadow:var(--shadow-sm);
+}
+.balance-chip em{font-style:normal;color:var(--money)}
+
+.hero{
+  position:relative;overflow:hidden;border-radius:24px;padding:22px 24px 24px;color:#fff;
+  background:linear-gradient(135deg,#093833 0%,#0B6E5F 58%,#0F8F79 100%);
+  box-shadow:0 22px 44px -30px rgba(11,110,95,.95);
+}
+.hero::after{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-110px;
+  background:radial-gradient(circle,rgba(255,255,255,.22),transparent 66%);pointer-events:none;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 80% at 100% 120%,rgba(17,156,130,.55),transparent 60%);
+}
+.hero-top{display:flex;align-items:center;gap:10px;margin-bottom:8px;position:relative}
+.pill{
+  font-size:12px;letter-spacing:.6px;padding:4px 10px;border-radius:999px;
+  background:rgba(255,255,255,.16);color:#DDF3EC;border:1px solid rgba(255,255,255,.16);
+}
+.hero-badge{margin-left:auto;font-size:12.5px;color:#BFE7DC}
+.hero-num{display:flex;align-items:baseline;gap:3px;position:relative;letter-spacing:-1.5px}
+.hero-num span{font-size:20px;font-weight:600;opacity:.9}
+.hero-num strong{font-size:42px;font-weight:700;letter-spacing:-2px;line-height:1.15}
+.hero-sub{font-size:13px;color:#A9D8CB;margin-top:2px;position:relative}
+.hero-actions{display:flex;gap:10px;margin-top:18px;position:relative}
+.btn-white{
+  background:#fff;color:#0B4F45;font-weight:650;font-size:14.5px;padding:11px 22px;border-radius:12px;
+  box-shadow:0 8px 20px -12px rgba(0,0,0,.6);transition:.16s;
+}
+.btn-white:hover{transform:translateY(-1px)}
+.btn-ghost-w{
+  padding:11px 18px;border-radius:12px;font-size:14.5px;font-weight:500;
+  color:#D6F0E8;border:1px solid rgba(255,255,255,.28);
+}
+.btn-ghost-w:hover{background:rgba(255,255,255,.1)}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow-sm)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.mini{padding:15px 16px}
+.row-between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mini b{font-size:13.5px}
+.mini .val{font-size:13px;color:var(--brand);font-weight:650}
+.bar{height:6px;border-radius:99px;background:#EDF2F2;overflow:hidden;margin:11px 0 8px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#119C82,#0B6E5F);transition:width .5s}
+.hint{font-size:12px;color:var(--ink3);line-height:1.5}
+.streak{font-size:13px;font-weight:700;color:var(--money)}
+
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;margin:26px 0 12px}
+.sec-head h2{font-size:16.5px;letter-spacing:.2px}
+.sec-head span{font-size:12.5px;color:var(--ink3)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;padding:7px 14px;border-radius:999px;font-size:13px;color:var(--ink2);
+  background:#fff;border:1px solid var(--line);transition:.15s;white-space:nowrap;
+}
+.chip:hover{border-color:#C6DCD6;color:var(--ink)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:600}
+
+.list{display:flex;flex-direction:column;gap:11px}
+.survey{
+  display:grid;grid-template-columns:44px 1fr auto;gap:14px;padding:16px;
+  align-items:start;transition:.18s;cursor:pointer;text-align:left;width:100%;
+}
+.survey:hover{border-color:#C6DCD6;box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.survey.done{opacity:.55;cursor:default}
+.survey.done:hover{transform:none;box-shadow:var(--shadow-sm);border-color:var(--line)}
+.src{
+  width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
+  color:#fff;font-weight:700;font-size:15px;letter-spacing:-.5px;
+}
+.s-body{min-width:0}
+.s-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.s-top h3{font-size:15px;font-weight:600;letter-spacing:.1px;line-height:1.4}
+.tag{
+  font-size:10.5px;padding:2px 7px;border-radius:6px;background:#F1F4F5;color:var(--ink2);
+  font-weight:600;letter-spacing:.3px;flex:0 0 auto;
+}
+.tag.new{background:var(--brand-soft);color:var(--brand)}
+.tag.hot{background:var(--money-soft);color:var(--money)}
+.tag.gray{background:#F1F4F5;color:var(--ink3)}
+.s-desc{
+  font-size:12.8px;color:var(--ink2);margin-top:5px;line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.s-meta{display:flex;align-items:center;gap:7px;margin-top:9px;font-size:12px;color:var(--ink3)}
+.s-meta i{width:3px;height:3px;border-radius:50%;background:#C4D1D4}
+.quota{display:flex;align-items:center;gap:8px;margin-top:9px}
+.q-bar{flex:1;height:4px;border-radius:99px;background:#EEF2F3;overflow:hidden;max-width:150px}
+.q-bar i{display:block;height:100%;background:#9FD3C6;border-radius:99px}
+.quota span{font-size:11.5px;color:var(--ink3)}
+.s-pay{display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding-left:6px}
+.s-pay b{font-size:19px;font-weight:700;color:var(--money);letter-spacing:-.6px}
+.s-pay span{font-size:12px;color:var(--brand);font-weight:600}
+
+.empty{
+  text-align:center;padding:44px 20px;color:var(--ink3);font-size:13.5px;
+  border:1px dashed #D9E3E5;border-radius:var(--r);background:#FBFCFC;
+}
+.skeleton{border-radius:var(--r);background:linear-gradient(90deg,#EEF2F3 25%,#F6F9FA 37%,#EEF2F3 63%);background-size:400% 100%;animation:sh 1.2s infinite}
+@keyframes sh{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.sk-row{height:96px;margin-bottom:11px}
+
+.src-strip{display:flex;align-items:center;gap:8px;margin-top:22px;flex-wrap:wrap}
+.src-strip span{font-size:11.5px;color:var(--ink3)}
+.src-mini{
+  width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;
+  font-size:10.5px;font-weight:700;opacity:.85;
+}
+
+.wcard{
+  border-radius:24px;padding:22px 24px;color:#fff;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,#111D20,#1B3A38 60%,#0B6E5F);
+  box-shadow:0 22px 44px -30px rgba(12,26,29,.9);
+}
+.wcard::after{
+  content:"";position:absolute;width:200px;height:200px;border-radius:50%;right:-50px;bottom:-90px;
+  background:radial-gradient(circle,rgba(17,156,130,.5),transparent 68%);
+}
+.wcard .lab{font-size:12.5px;color:#9FC6BC;letter-spacing:.4px}
+.wcard .big{font-size:40px;font-weight:700;letter-spacing:-2px;margin-top:4px;line-height:1.2}
+.wcard .big em{font-size:20px;font-style:normal;font-weight:600;opacity:.85;margin-right:2px}
+.wcard .sub{font-size:12.5px;color:#8FB5AB;margin-top:4px}
+.wbtns{display:flex;gap:10px;margin-top:18px;position:relative}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-top:14px}
+.tri .card{padding:14px 12px;text-align:center}
+.tri b{display:block;font-size:17px;font-weight:700;letter-spacing:-.4px}
+.tri span{font-size:11.5px;color:var(--ink3)}
+.tri .pending b{color:var(--money)}
+
+.rec{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid #F0F4F5}
+.rec:last-child{border-bottom:0}
+.rec .rd{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:14px;flex:0 0 34px}
+.rec .rt{flex:1;min-width:0}
+.rec .rt b{font-size:13.5px;font-weight:550;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rec .rt span{font-size:11.5px;color:var(--ink3)}
+.rec .ra{text-align:right;flex:0 0 auto}
+.rec .ra b{font-size:14.5px;font-weight:650;letter-spacing:-.3px}
+.rec .ra b.in{color:var(--ok)}
+.rec .ra b.out{color:var(--ink)}
+
+.me-head{display:flex;align-items:center;gap:14px;padding:20px}
+.avatar{
+  width:58px;height:58px;border-radius:50%;flex:0 0 58px;display:grid;place-items:center;
+  background:linear-gradient(140deg,#0B6E5F,#119C82);color:#fff;font-size:20px;font-weight:700;
+}
+.me-head h2{font-size:17px}
+.me-head p{font-size:12.5px;color:var(--ink3);margin-top:3px}
+.lvl{
+  font-size:11px;padding:3px 9px;border-radius:999px;background:var(--money-soft);color:var(--money);
+  font-weight:600;display:inline-block;margin-top:6px;
+}
+.stat4{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;border-top:1px solid var(--line)}
+.stat4 div{padding:14px 4px;border-right:1px solid var(--line)}
+.stat4 div:last-child{border-right:0}
+.stat4 b{display:block;font-size:16.5px;font-weight:700;letter-spacing:-.5px}
+.stat4 span{font-size:11.5px;color:var(--ink3)}
+.menu{display:flex;flex-direction:column}
+.mi{display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #F0F4F5;font-size:14px;text-align:left;width:100%}
+.mi:last-child{border-bottom:0}
+.mi .mi-ico{width:30px;height:30px;border-radius:9px;background:#F4F7F8;display:grid;place-items:center;font-size:14px;flex:0 0 30px;color:var(--ink2)}
+.mi .mi-ico svg{width:16px;height:16px;display:block}
+.mi .arrow{margin-left:auto;color:#C2CFD3;font-size:16px}
+.mi .badge{margin-left:auto;font-size:12px;color:var(--brand);font-weight:600}
+
+.tabbar{
+  display:none;position:fixed;bottom:0;left:0;right:0;z-index:40;
+  background:rgba(255,255,255,.94);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--ink3);padding:6px 0}
+.tabbar button.on{color:var(--brand);font-weight:650}
+.tabbar .ti{font-size:17px;line-height:1;display:grid;place-items:center;height:22px}
+.tabbar .ti svg{width:21px;height:21px;display:block}
+
+.runner{
+  position:fixed;inset:0;z-index:100;background:rgba(9,20,22,.45);
+  backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;
+}
+.r-card{
+  background:#fff;width:100%;max-width:660px;height:100%;display:flex;flex-direction:column;
+  overflow:hidden;animation:pop .22s ease-out;
+}
+@keyframes pop{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+.r-head{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid #F1F5F6}
+.r-src{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:0 0 36px}
+.r-ht{min-width:0;flex:1}
+.r-ht b{display:block;font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-ht span{font-size:11.5px;color:var(--ink3)}
+.icon-btn{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink3);font-size:15px}
+.icon-btn:hover{background:#F3F6F7;color:var(--ink)}
+.r-timer{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;letter-spacing:.5px}
+.r-prog{height:3px;background:#F0F4F5;position:relative;flex:0 0 3px}
+.r-prog i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#119C82,#0B6E5F);transition:width .35s}
+.r-body{flex:1;overflow-y:auto;padding:22px 22px 12px}
+.r-foot{padding:14px 22px calc(16px + env(safe-area-inset-bottom));border-top:1px solid #F1F5F6;display:flex;gap:10px;background:#fff}
+
+.qno{font-size:11.5px;color:var(--brand);font-weight:700;letter-spacing:1px;margin-bottom:7px}
+.qtext{font-size:18.5px;font-weight:600;line-height:1.5;letter-spacing:.1px;margin-bottom:6px}
+.qhint{font-size:12px;color:var(--ink3);margin-bottom:18px}
+.opts{display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;gap:11px;align-items:center;width:100%;text-align:left;
+  padding:14px 15px;border:1.5px solid var(--line);border-radius:14px;background:#fff;
+  transition:.14s;font-size:14.5px;line-height:1.45;
+}
+.opt:hover{border-color:#BFD8D2;background:#FBFDFC}
+.opt .dot{width:18px;height:18px;flex:0 0 18px;border:1.5px solid #C9D6D9;border-radius:50%;transition:.14s}
+.opt.sq .dot{border-radius:6px}
+.opt.on{border-color:var(--brand);background:var(--brand-soft)}
+.opt.on .dot{border-color:var(--brand);background:var(--brand);box-shadow:inset 0 0 0 3px #fff}
+.opt.sq.on .dot{box-shadow:none;position:relative}
+.opt.sq.on .dot::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700}
+
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.seg{
+  padding:16px 4px;border:1.5px solid var(--line);border-radius:13px;text-align:center;
+  font-size:12.5px;color:var(--ink2);transition:.14s;background:#fff;line-height:1.35;
+}
+.seg:hover{border-color:#BFD8D2}
+.seg.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:650}
+.scale-lab{display:flex;justify-content:space-between;font-size:11.5px;color:var(--ink3);margin-top:9px}
+
+textarea.qin{
+  width:100%;min-height:104px;padding:14px;border:1.5px solid var(--line);border-radius:14px;
+  font:inherit;font-size:14.5px;resize:vertical;outline:none;color:var(--ink);background:#fff;
+}
+textarea.qin:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(11,110,95,.08)}
+.counter{text-align:right;font-size:11.5px;color:var(--ink3);margin-top:6px}
+
+.btn{padding:13px 20px;border-radius:13px;font-size:15px;font-weight:600;transition:.16s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.primary{background:var(--brand);color:#fff;box-shadow:0 10px 22px -14px rgba(11,110,95,.9)}
+.btn.primary:hover{background:#0A6153}
+.btn.primary:disabled{background:#E3EAEC;color:#A9B6BA;box-shadow:none}
+.btn.ghost{background:#fff;border:1.5px solid var(--line);color:var(--ink2)}
+.btn.ghost:hover{border-color:#C6DCD6;color:var(--ink)}
+.btn.block{width:100%}
+
+.intro-pay{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--money-soft);border-radius:14px;padding:16px 18px;margin-bottom:14px;
+}
+.intro-pay span{font-size:13px;color:#8A5A17}
+.intro-pay b{font-size:27px;font-weight:700;color:var(--money);letter-spacing:-1px}
+.intro-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.intro-stats div{background:#F7FAFA;border-radius:12px;padding:11px;text-align:center}
+.intro-stats span{display:block;font-size:11.5px;color:var(--ink3)}
+.intro-stats b{font-size:13.5px;font-weight:600}
+.intro-desc{font-size:13.5px;color:var(--ink2);line-height:1.7;margin-bottom:14px}
+.rules{margin:0;padding-left:18px;font-size:12.5px;color:var(--ink3);line-height:1.9}
+
+.result{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;text-align:center;padding:32px 26px;
+}
+.res-icon{
+  width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#fff;
+  background:linear-gradient(140deg,#0B6E5F,#119C82);margin-bottom:16px;
+  box-shadow:0 14px 28px -16px rgba(11,110,95,.9);
+}
+.res-icon.warn{background:linear-gradient(140deg,#B45309,#D98A2B);box-shadow:0 14px 28px -16px rgba(180,83,9,.8)}
+.result h2{font-size:21px}
+.res-sub{font-size:13px;color:var(--ink3);margin-top:6px}
+.res-amt{font-size:38px;font-weight:700;color:var(--money);letter-spacing:-1.5px;margin:16px 0 4px}
+.res-note{font-size:12.5px;color:var(--ink3)}
+.res-flag{
+  margin-top:16px;font-size:12.5px;line-height:1.65;color:#8A5A17;background:var(--money-soft);
+  padding:11px 14px;border-radius:12px;text-align:left;max-width:420px;
+}
+.res-flag ul{margin:6px 0 0;padding-left:16px}
+.res-actions{display:flex;flex-direction:column;gap:9px;width:100%;max-width:340px;margin-top:26px}
+
+.sheet-wrap{position:fixed;inset:0;z-index:120;background:rgba(9,20,22,.45);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center}
+.sheet{
+  background:#fff;width:100%;max-width:460px;border-radius:22px 22px 0 0;padding:22px 22px calc(24px + env(safe-area-inset-bottom));
+  animation:up .24s ease-out;
+}
+@keyframes up{from{transform:translateY(30px)}to{transform:none}}
+.sheet h3{font-size:17px;margin-bottom:4px}
+.sheet .sub{font-size:12.5px;color:var(--ink3);margin-bottom:16px}
+.amt-in{display:flex;align-items:center;gap:6px;border-bottom:1.5px solid var(--line);padding:8px 0 10px;margin-bottom:16px}
+.amt-in span{font-size:22px;font-weight:600;color:var(--ink2)}
+.amt-in input{border:0;outline:none;font:inherit;font-size:30px;font-weight:700;width:100%;letter-spacing:-1px;background:none}
+.pays{display:flex;gap:10px;margin-bottom:18px}
+.pay-opt{flex:1;border:1.5px solid var(--line);border-radius:13px;padding:12px;display:flex;align-items:center;gap:9px;font-size:13.5px}
+.pay-opt.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand);font-weight:600}
+.pay-opt .pd{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700}
+.sheet-foot{display:flex;gap:10px}
+
+.auth{position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(120% 80% at 20% 0%,#E8F5F1,#F4F6F8 55%)}
+.auth-card{width:100%;max-width:400px;background:#fff;border-radius:24px;padding:30px 26px 26px;
+  box-shadow:0 30px 60px -34px rgba(12,26,29,.5);border:1px solid var(--line)}
+.auth-card .logo{width:44px;height:44px;font-size:19px;margin-bottom:16px}
+.auth-card h1{font-size:22px;letter-spacing:-.3px}
+.auth-card .sub{font-size:13px;color:var(--ink3);margin-top:6px;margin-bottom:22px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:12.5px;color:var(--ink3);margin-bottom:6px}
+.field input{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font:inherit;font-size:14.5px;
+  outline:none;background:#fff;transition:.15s;
+}
+.field input:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(11,110,95,.08)}
+.auth-foot{display:flex;align-items:center;justify-content:space-between;margin-top:18px;font-size:13px;color:var(--ink3)}
+.auth-foot button{color:var(--brand);font-weight:600;font-size:13px}
+.auth-tip{margin-top:16px;font-size:11.5px;color:var(--ink3);text-align:center;line-height:1.7}
+.auth-err{color:var(--danger);font-size:12.5px;min-height:18px;margin-top:8px}
+
+.toast{
+  position:fixed;left:50%;bottom:100px;transform:translate(-50%,14px);
+  background:#0C1A1D;color:#fff;padding:11px 18px;border-radius:12px;font-size:13.5px;
+  opacity:0;transition:.25s;z-index:300;pointer-events:none;max-width:82vw;text-align:center;
+  box-shadow:0 16px 30px -16px rgba(0,0,0,.7);
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:900px){
+  .rail{display:none}
+  .mtop{display:flex}
+  .wrap{padding:16px 16px calc(92px + env(safe-area-inset-bottom))}
+  .tabbar{display:flex}
+  .hero{padding:18px 18px 20px;border-radius:20px}
+  .hero-num strong{font-size:36px}
+  .grid2{gap:10px}
+  .mini{padding:13px 14px}
+  .runner{align-items:flex-end}
+  .r-card{height:94vh;border-radius:22px 22px 0 0;max-width:100%}
+  .r-body{padding:20px 18px 10px}
+  .r-foot{padding:12px 18px calc(14px + env(safe-area-inset-bottom))}
+  .qtext{font-size:17.5px}
+  .stat4 b{font-size:15px}
+}
+@media (max-width:560px){
+  .survey{grid-template-columns:40px 1fr;gap:12px;padding:14px}
+  .src{width:40px;height:40px;border-radius:11px;font-size:14px}
+  .s-pay{
+    grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;
+    border-top:1px dashed var(--line);padding-top:11px;margin-top:2px;padding-left:0;
+  }
+  .s-pay b{font-size:18px}
+  .s-pay span{background:var(--brand);color:#fff;padding:6px 15px;border-radius:9px;font-size:12.5px}
+  .survey.done .s-pay span{background:#DDE5E7;color:var(--ink2)}
+  .scale{grid-template-columns:repeat(5,1fr);gap:5px}
+  .seg{padding:12px 2px;font-size:11px}
+  .me-head{padding:16px}
+  .avatar{width:50px;height:50px;flex:0 0 50px;font-size:17px}
+  .wcard .big{font-size:34px}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="rail">
+    <div class="brand">
+      <div class="logo">酬</div>
+      <div><b>有酬</b><span>全球问卷 · 即时结算</span></div>
+    </div>
+    <button class="nav-item on" data-nav="hall"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="16" rx="3.6"/><path d="M8.6 9.6h6.8M8.6 14h4.4"/></svg></span>任务大厅</button>
+    <button class="nav-item" data-nav="wallet"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3.2"/><path d="M3 10.4h18"/><circle cx="16.8" cy="15" r="1.1"/></svg></span>我的钱包</button>
+    <button class="nav-item" data-nav="me"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.5"/><path d="M4.9 19.6a7.1 7.1 0 0 1 14.2 0"/></svg></span>个人中心</button>
+    <div class="rail-foot">
+      <p style="margin-bottom:10px;line-height:1.7">已接入 <span id="srcCount">8</span> 家题源<br>数据由合作调研机构提供</p>
+      <a href="console.html">运营后台 →</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="wrap">
+
+      <div class="mtop">
+        <div class="brand">
+          <div class="logo">酬</div>
+          <div><b>有酬</b><span>全球问卷 · 即时结算</span></div>
+        </div>
+        <button class="balance-chip" onclick="go('wallet')">余额 <em id="chipBal">¥0.00</em></button>
+      </div>
+
+      <section id="v-hall">
+        <div class="hero">
+          <div class="hero-top">
+            <span class="pill">今日可赚</span>
+            <span class="hero-badge" id="heroCount">—</span>
+          </div>
+          <div class="hero-num"><span>¥</span><strong id="todayMax">0.00</strong></div>
+          <p class="hero-sub" id="heroSub">正在加载题源…</p>
+          <div class="hero-actions">
+            <button class="btn-white" id="heroStart">开始答题</button>
+            <button class="btn-ghost-w" onclick="go('wallet')">我的钱包</button>
+          </div>
+        </div>
+
+        <div class="grid2">
+          <div class="card mini">
+            <div class="row-between"><b>今日已完成</b><span class="val" id="dayGoalTxt">0 份</span></div>
+            <div class="bar"><i id="dayBar" style="width:0"></i></div>
+            <p class="hint" id="dayHint">今日收益 ¥0.00</p>
+          </div>
+          <div class="card mini">
+            <div class="row-between"><b>可提现</b><span class="streak" id="availTxt">¥0.00</span></div>
+            <div class="bar"><i id="availBar" style="width:0"></i></div>
+            <p class="hint" id="availHint">提现门槛 ¥20</p>
+          </div>
+        </div>
+
+        <div class="sec-head">
+          <h2>推荐问卷</h2>
+          <span id="listCount"></span>
+        </div>
+        <div class="chips" id="chips">
+          <button class="chip on" data-f="all">全部</button>
+          <button class="chip" data-f="high">高收益</button>
+          <button class="chip" data-f="short">5 分钟内</button>
+          <button class="chip" data-f="new">新上线</button>
+        </div>
+        <div class="list" id="surveyList">
+          <div class="skeleton sk-row"></div>
+          <div class="skeleton sk-row"></div>
+          <div class="skeleton sk-row"></div>
+        </div>
+
+        <div class="src-strip" id="srcStrip"></div>
+      </section>
+
+      <section id="v-wallet" hidden>
+        <div class="wcard">
+          <div class="lab">可用余额（元）</div>
+          <div class="big"><em>¥</em><span id="wBal">0.00</span></div>
+          <p class="sub" id="wTotal">累计收益 ¥0.00</p>
+          <div class="wbtns">
+            <button class="btn-white" onclick="openWithdraw()">立即提现</button>
+            <button class="btn-ghost-w" onclick="go('hall')">去赚更多</button>
+          </div>
+        </div>
+
+        <div class="tri">
+          <div class="card pending"><b id="wPending">0.00</b><span>待结算</span></div>
+          <div class="card"><b id="wWithdrawn">0.00</b><span>已提现</span></div>
+          <div class="card"><b id="wDone">0</b><span>完成问卷</span></div>
+        </div>
+
+        <div class="sec-head"><h2>账单明细</h2><span>实时入账</span></div>
+        <div class="card" id="records"><div style="padding:20px;text-align:center;color:var(--ink3);font-size:13px">加载中…</div></div>
+
+        <div class="card" style="margin-top:14px;padding:15px 16px;background:#FBFCFC">
+          <p style="font-size:12.5px;color:var(--ink2);line-height:1.75">
+            <b style="color:var(--ink)">结算规则</b><br>
+            问卷提交后进入「待结算」，题源服务端回调确认后进入冻结期，冻结结束转为可用余额；提现门槛 ¥20，T+0 到账微信零钱或支付宝，单笔上限 ¥500。
+          </p>
+        </div>
+      </section>
+
+      <section id="v-me" hidden>
+        <div class="card">
+          <div class="me-head">
+            <div class="avatar" id="avatar">—</div>
+            <div style="min-width:0">
+              <h2 id="meName">加载中</h2>
+              <p id="meMeta">—</p>
+              <span class="lvl" id="meLvl">—</span>
+            </div>
+          </div>
+          <div class="stat4">
+            <div><b id="mDone">0</b><span>完成问卷</span></div>
+            <div><b id="mRate">—</b><span>结算率</span></div>
+            <div><b id="mTotal">¥0</b><span>累计收益</span></div>
+            <div><b id="mCredit">—</b><span>信誉分</span></div>
+          </div>
+        </div>
+
+        <div class="sec-head"><h2>邀请奖励</h2><span>好友答题你拿 8%</span></div>
+        <div class="card" style="padding:18px 16px;background:linear-gradient(135deg,#F7FBFA,#EEF6F3);border-color:#DCEBE6">
+          <b style="font-size:14.5px">邀请好友，永久抽成 8%</b>
+          <p class="hint" style="margin-top:4px">好友每完成一份问卷，你获得其佣金的 8%，上不封顶。</p>
+          <div style="display:flex;gap:9px;margin-top:14px">
+            <div id="inviteCode" style="flex:1;border:1.5px dashed #BFD8D2;border-radius:11px;padding:11px 14px;font-size:13px;color:var(--brand);font-weight:600;letter-spacing:1px;background:#fff">—</div>
+            <button class="btn primary" style="padding:11px 18px;font-size:14px" onclick="copyInvite()">复制</button>
+          </div>
+        </div>
+
+        <div class="sec-head"><h2>更多</h2><span></span></div>
+        <div class="card menu">
+          <button class="mi" onclick="openRealname()"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5.5" width="18" height="13" rx="3"/><circle cx="8.6" cy="11.2" r="2"/><path d="M5.8 16c.5-1.4 1.6-2.1 2.8-2.1s2.3.7 2.8 2.1M14.4 10.6h3.4M14.4 14.2h3.4"/></svg></span>实名认证<span class="badge" id="realBadge">—</span></button>
+          <button class="mi" onclick="openSecurity()"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10" width="15" height="10" rx="2.6"/><path d="M8.2 10V7.6a3.8 3.8 0 0 1 7.6 0V10"/><circle cx="12" cy="15" r="1.3"/></svg></span>账号安全<span class="arrow">›</span></button>
+          <button class="mi" onclick="location.href='console.html'"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg></span>运营后台<span class="arrow">›</span></button>
+          <button class="mi" onclick="logout()"><span class="mi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17l5-5-5-5M20 12H9M12 20H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h6"/></svg></span>退出登录<span class="arrow">›</span></button>
+        </div>
+
+        <p style="text-align:center;font-size:11.5px;color:var(--ink3);margin-top:22px;line-height:1.8">
+          有酬 · 问卷数据服务<br>问卷由合作调研机构提供，答案仅用于市场研究分析
+        </p>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<nav class="tabbar">
+  <button class="on" data-nav="hall"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4.5" width="16" height="16" rx="3.6"/><path d="M8.6 9.6h6.8M8.6 14h4.4"/></svg></span>任务</button>
+  <button data-nav="wallet"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3.2"/><path d="M3 10.4h18"/><circle cx="16.8" cy="15" r="1.1"/></svg></span>钱包</button>
+  <button data-nav="me"><span class="ti"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.2" r="3.5"/><path d="M4.9 19.6a7.1 7.1 0 0 1 14.2 0"/></svg></span>我的</button>
+</nav>
+
+<div class="runner" id="runner" hidden></div>
+<div id="sheetHost"></div>
+<div class="toast" id="toast"></div>
+
+<div class="auth" id="auth" hidden>
+  <div class="auth-card">
+    <div class="logo">酬</div>
+    <h1 id="authTitle">登录有酬</h1>
+    <p class="sub" id="authSub">答题有酬，数据有价</p>
+
+    <div class="field">
+      <label>手机号 / 账号</label>
+      <input id="fPhone" type="text" autocomplete="username" placeholder="13800000001" value="13800000001">
+    </div>
+    <div class="field">
+      <label>密码</label>
+      <input id="fPass" type="password" autocomplete="current-password" placeholder="至少 6 位" value="demo123456">
+    </div>
+    <div class="field" id="fNameWrap" hidden>
+      <label>昵称（选填）</label>
+      <input id="fName" type="text" placeholder="怎么称呼你">
+    </div>
+    <div class="auth-err" id="authErr"></div>
+
+    <button class="btn primary block" id="authSubmit" style="margin-top:6px">登 录</button>
+    <div class="auth-foot">
+      <span id="authSwitchTip">还没有账号？</span>
+      <button id="authSwitch">立即注册</button>
+    </div>
+    <p class="auth-tip">演示账号 13800000001 / demo123456<br>管理员 admin / admin12345（运营后台）</p>
+  </div>
+</div>
+
+<script>
+/* ================= 基础工具 ================= */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const fmt = c => (Number(c || 0) / 100).toFixed(2);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[m]));
+
+let token = localStorage.getItem('yc_token') || '';
+let ME = null, WALLET = null, STATS = null, OFFERS = [];
+
+function toast(msg) {
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove('on'), 2200);
+}
+
+async function api(path, opts = {}) {
+  const res = await fetch(path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: 'Bearer ' + token } : {}),
+      ...(opts.headers || {})
+    }
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const err = new Error((data.error && data.error.message) || '请求失败');
+    err.code = data.error && data.error.code;
+    err.status = res.status;
+    throw err;
+  }
+  return data;
+}
+
+/* ================= 登录 ================= */
+let authMode = 'login';
+
+function showAuth(mode) {
+  authMode = mode || 'login';
+  $('#auth').hidden = false;
+  $('#authTitle').textContent = authMode === 'login' ? '登录有酬' : '注册有酬';
+  $('#authSub').textContent = authMode === 'login' ? '答题有酬，数据有价' : '注册后即可开始答题赚佣金';
+  $('#fNameWrap').hidden = authMode === 'login';
+  $('#authSubmit').textContent = authMode === 'login' ? '登 录' : '注 册';
+  $('#authSwitchTip').textContent = authMode === 'login' ? '还没有账号？' : '已有账号？';
+  $('#authSwitch').textContent = authMode === 'login' ? '立即注册' : '去登录';
+  $('#authErr').textContent = '';
+}
+
+$('#authSwitch').addEventListener('click', () => showAuth(authMode === 'login' ? 'register' : 'login'));
+
+$('#authSubmit').addEventListener('click', async () => {
+  const phone = $('#fPhone').value.trim();
+  const password = $('#fPass').value;
+  const name = $('#fName').value.trim();
+  if (!phone || !password) { $('#authErr').textContent = '请填写账号和密码'; return; }
+  $('#authSubmit').disabled = true;
+  try {
+    const path = authMode === 'login' ? '/api/auth/login' : '/api/auth/register';
+    const body = authMode === 'login' ? { phone, password } : { phone, password, name, deviceId: deviceId() };
+    const r = await api(path, { method: 'POST', body: JSON.stringify(body) });
+    token = r.token;
+    localStorage.setItem('yc_token', token);
+    ME = r.user; WALLET = r.wallet;
+    $('#auth').hidden = true;
+    await bootData();
+    go('hall');
+    toast('欢迎回来，' + r.user.name);
+  } catch (e) {
+    $('#authErr').textContent = e.message;
+  } finally {
+    $('#authSubmit').disabled = false;
+  }
+});
+
+$('#fPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('#authSubmit').click(); });
+
+function deviceId() {
+  let d = localStorage.getItem('yc_device');
+  if (!d) { d = 'dev_' + Math.random().toString(36).slice(2, 12); localStorage.setItem('yc_device', d); }
+  return d;
+}
+
+function logout() {
+  localStorage.removeItem('yc_token');
+  token = ''; ME = null;
+  showAuth('login');
+}
+
+/* ================= 导航 ================= */
+let view = 'hall';
+function go(v) {
+  view = v;
+  ['hall', 'wallet', 'me'].forEach(k => { $('#v-' + k).hidden = (k !== v); });
+  $$('[data-nav]').forEach(b => b.classList.toggle('on', b.dataset.nav === v));
+  window.scrollTo({ top: 0 });
+  if (v === 'wallet') loadWallet();
+  if (v === 'me') loadMe();
+}
+$$('[data-nav]').forEach(b => b.addEventListener('click', () => go(b.dataset.nav)));
+
+/* ================= 数据加载 ================= */
+async function bootData() {
+  await Promise.all([loadOffers(), loadWallet(), loadMe()]);
+}
+
+async function loadOffers() {
+  try {
+    const r = await api('/api/offers');
+    OFFERS = r.offers;
+    renderHall();
+  } catch (e) {
+    if (e.status === 401) { showAuth('login'); return; }
+    $('#surveyList').innerHTML = '<div class="empty">加载失败：' + esc(e.message) + '</div>';
+  }
+}
+
+async function loadWallet() {
+  try {
+    const [w, t, s] = await Promise.all([api('/api/wallet'), api('/api/wallet/txns'), api('/api/me/stats')]);
+    WALLET = w; STATS = s;
+    renderWallet(w, t.txns, s);
+  } catch (e) { /* 未登录忽略 */ }
+}
+
+async function loadMe() {
+  try {
+    const r = await api('/api/me');
+    ME = r.user; WALLET = r.wallet;
+    if (STATS) renderMe(r.user);
+  } catch (e) { /* ignore */ }
+}
+
+/* ================= 大厅 ================= */
+let filter = 'all';
+$$('.chip').forEach(c => c.addEventListener('click', () => {
+  filter = c.dataset.f;
+  $$('.chip').forEach(x => x.classList.toggle('on', x === c));
+  renderHall();
+}));
+
+function renderHall() {
+  const avail = OFFERS.filter(o => !o.completed);
+  const sum = avail.reduce((a, b) => a + b.reward, 0);
+  $('#todayMax').textContent = fmt(sum);
+  $('#heroCount').textContent = avail.length + ' 份待答';
+  const avg = avail.length ? Math.round(avail.reduce((a, b) => a + b.minutes, 0) / avail.length) : 0;
+  const srcKeys = Object.keys(OFFERS.reduce((m, o) => (m[o.source.key] = 1, m), {}));
+  $('#heroSub').textContent = OFFERS.length
+    ? '已接入 ' + srcKeys.length + ' 家题源 · 平均 ' + avg + ' 分钟/份'
+    : '暂无可用任务';
+
+  const todayCount = STATS ? STATS.todayCount : 0;
+  $('#dayGoalTxt').textContent = todayCount + ' 份';
+  $('#dayBar').style.width = Math.min(100, todayCount / 5 * 100) + '%';
+  $('#dayHint').textContent = STATS ? '今日收益 ¥' + fmt(STATS.todayEarned) + (todayCount >= 5 ? ' · 目标已达成' : ' · 目标 5 份') : '';
+
+  const av = WALLET ? WALLET.available : 0;
+  $('#availTxt').textContent = '¥' + fmt(av);
+  $('#availBar').style.width = Math.min(100, av / 2000 * 100) + '%';
+  $('#availHint').textContent = av >= 2000 ? '已可提现' : '距离提现门槛还差 ¥' + fmt(2000 - av);
+  $('#chipBal').textContent = '¥' + fmt(av);
+
+  let arr = avail.slice();
+  if (filter === 'high') arr = arr.filter(o => o.reward >= 900);
+  if (filter === 'short') arr = arr.filter(o => o.minutes <= 5);
+  if (filter === 'new') arr = arr.filter(o => o.tags.indexOf('新题') >= 0);
+  arr.sort((a, b) => b.reward - a.reward);
+
+  $('#listCount').textContent = arr.length + ' 个可做任务';
+  $('#surveyList').innerHTML = arr.length
+    ? arr.map(cardHTML).join('')
+    : '<div class="empty">这一分类暂时没有任务，换个筛选试试</div>';
+
+  const srcMap = {};
+  OFFERS.forEach(o => { srcMap[o.source.key] = o.source; });
+  $('#srcStrip').innerHTML = Object.values(srcMap).map(s =>
+    '<div class="src-mini" style="background:' + s.color + '" title="' + esc(s.name) + '">' + esc(s.glyph) + '</div>'
+  ).join('') + '<span>已接入 ' + srcKeys.length + ' 家题源，更多持续接入中</span>';
+  $('#srcCount').textContent = srcKeys.length;
+}
+
+function cardHTML(o) {
+  const pct = Math.max(4, Math.min(100, Math.round(o.leftQuota / o.totalQuota * 100)));
+  const tags = o.tags.map(t =>
+    '<span class="tag ' + (t === '新题' ? 'new' : t.indexOf('收益') >= 0 ? 'hot' : '') + '">' + esc(t) + '</span>'
+  ).join('');
+  const doneTag = o.completed ? '<span class="tag gray">已完成</span>' : '';
+  const external = o.delivery === 'external';
+
+  // 外部任务没有题库，时长/题数在原站，这里不编造数字
+  const meta = external
+    ? '<span>原站作答</span><i></i><span>' + esc(o.source.name) + '</span><i></i><span>' + esc(o.category) + '</span>'
+    : '<span>' + o.minutes + ' 分钟</span><i></i><span>' + o.questionCount + ' 题</span><i></i><span>' + esc(o.source.name) + '</span><i></i><span>' + esc(o.category) + '</span>';
+
+  return '<article class="card survey ' + (o.completed ? 'done' : '') + '" data-id="' + o.id + '">' +
+    '<div class="src" style="background:' + o.source.color + '">' + esc(o.source.glyph) + '</div>' +
+    '<div class="s-body">' +
+      '<div class="s-top"><h3>' + esc(o.title) + '</h3>' + doneTag + tags + (external ? '<span class="tag">外部</span>' : '') + '</div>' +
+      '<p class="s-desc">' + esc(o.description) + '</p>' +
+      '<div class="s-meta">' + meta + '</div>' +
+      '<div class="quota"><div class="q-bar"><i style="width:' + pct + '%"></i></div><span>剩 ' + o.leftQuota + '/' + o.totalQuota + '</span></div>' +
+    '</div>' +
+    '<div class="s-pay"><b>¥' + fmt(o.reward) + '</b><span>' + (o.completed ? '已完成' : external ? '去完成' : '去答题') + '</span></div>' +
+  '</article>';
+}
+
+$('#surveyList').addEventListener('click', e => {
+  const el = e.target.closest('.survey');
+  if (!el || el.classList.contains('done')) return;
+  const o = OFFERS.find(x => x.id === el.dataset.id);
+  if (!o) return;
+  if (o.delivery === 'external') { openExternal(o); return; }
+  openIntro(o);
+});
+
+/**
+ * 外部任务：题目在原站，平台只做聚合与核销。
+ * 不复制对方题目，也不伪造站内答题流程。
+ */
+function openExternal(o) {
+  if (!o.externalUrl) return toast('该任务缺少原站地址');
+  const ok = confirm(
+    '「' + o.title + '」\n\n' +
+    '来源：' + o.source.name + '\n' +
+    '佣金：¥' + fmt(o.reward) + '\n\n' +
+    '该问卷由题源提供，将在新窗口打开原站完成。\n' +
+    '完成后回到本平台，在「我的」中提交完成凭证，运营核销后佣金入账。\n\n' +
+    '现在前往？'
+  );
+  if (!ok) return;
+  window.open(o.externalUrl, '_blank', 'noopener');
+}
+$('#heroStart').addEventListener('click', () => {
+  const el = document.querySelector('#surveyList .survey:not(.done)');
+  if (el) el.click(); else toast('暂无可用任务');
+});
+
+/* ================= 答题 ================= */
+let run = null, tickId = null;
+const R = () => $('#runner');
+
+function openIntro(o) {
+  run = { offer: o, sessionId: null, questions: null, idx: 0, answers: [], t0: 0 };
+  R().hidden = false;
+  document.body.style.overflow = 'hidden';
+  R().innerHTML = '<div class="r-card">' +
+    headHTML(o.source, o.title, o.source.name + ' · 市场研究问卷', '') +
+    '<div class="r-body">' +
+      '<div class="intro-pay"><span>完成奖励</span><b>¥' + fmt(o.reward) + '</b></div>' +
+      '<div class="intro-stats">' +
+        '<div><span>预计时长</span><b>' + o.minutes + ' 分钟</b></div>' +
+        '<div><span>题目数量</span><b>' + o.questionCount + ' 题</b></div>' +
+        '<div><span>剩余配额</span><b>' + o.leftQuota + ' 份</b></div>' +
+      '</div>' +
+      '<p class="intro-desc">' + esc(o.description) + '</p>' +
+      '<ul class="rules">' +
+        '<li>请根据真实情况作答，中途退出不保留进度</li>' +
+        '<li>系统会校验答题时长与前后一致性，异常答卷进入人工复核</li>' +
+        '<li>题源确认后进入冻结期，到期自动解冻为可用余额</li>' +
+      '</ul>' +
+    '</div>' +
+    '<footer class="r-foot"><button class="btn primary block" id="startBtn">开始答题</button></footer>' +
+  '</div>';
+  $('#startBtn').addEventListener('click', startSurvey);
+}
+
+function headHTML(source, title, sub, timer) {
+  return '<header class="r-head">' +
+    '<div class="r-src" style="background:' + source.color + '">' + esc(source.glyph) + '</div>' +
+    '<div class="r-ht"><b>' + esc(title) + '</b><span>' + esc(sub) + '</span></div>' +
+    '<div class="r-timer" id="rTimer">' + (timer || '') + '</div>' +
+    '<button class="icon-btn" onclick="quitRunner()">✕</button>' +
+  '</header>';
+}
+
+function quitRunner() {
+  if (run && run.questions && !run.done) {
+    if (!confirm('退出后本次答题进度不会保存，且已占用的配额不返还。确认退出？')) return;
+  }
+  closeRunner();
+}
+
+function closeRunner() {
+  R().hidden = true;
+  R().innerHTML = '';
+  document.body.style.overflow = '';
+  clearInterval(tickId);
+  run = null;
+  loadOffers();
+}
+
+async function startSurvey() {
+  const btn = $('#startBtn');
+  btn.disabled = true; btn.textContent = '正在锁定配额…';
+  try {
+    const r = await api('/api/sessions', {
+      method: 'POST',
+      body: JSON.stringify({ offerId: run.offer.id, deviceId: deviceId() })
+    });
+    run.sessionId = r.sessionId;
+    run.questions = r.offer.questions;
+    run.answers = new Array(r.offer.questions.length).fill(undefined);
+    run.t0 = Date.now();
+    run.idx = 0;
+    submitting = false;
+    clearInterval(tickId);
+    tickId = setInterval(() => {
+      const el = document.getElementById('rTimer');
+      if (el) {
+        const s = Math.floor((Date.now() - run.t0) / 1000);
+        el.textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
+      }
+    }, 1000);
+    renderQuestion();
+  } catch (e) {
+    btn.disabled = false; btn.textContent = '开始答题';
+    toast(e.message);
+    if (e.code === 'already_completed' || e.code === 'quota_exhausted') setTimeout(closeRunner, 900);
+  }
+}
+
+function renderQuestion() {
+  const qs = run.questions, q = qs[run.idx], i = run.idx;
+  let body = '';
+
+  if (q.type === 'single') {
+    body = '<div class="opts">' + q.opts.map((o, j) =>
+      '<button class="opt ' + (run.answers[i] === j ? 'on' : '') + '" data-j="' + j + '"><span class="dot"></span><span>' + esc(o) + '</span></button>'
+    ).join('') + '</div>';
+  } else if (q.type === 'multi') {
+    const arr = Array.isArray(run.answers[i]) ? run.answers[i] : [];
+    body = '<div class="opts">' + q.opts.map((o, j) =>
+      '<button class="opt sq ' + (arr.indexOf(j) >= 0 ? 'on' : '') + '" data-j="' + j + '"><span class="dot"></span><span>' + esc(o) + '</span></button>'
+    ).join('') + '</div>';
+  } else if (q.type === 'scale') {
+    body = '<div class="scale">' + q.opts.map((o, j) =>
+      '<button class="seg ' + (run.answers[i] === j ? 'on' : '') + '" data-j="' + j + '">' + esc(o) + '</button>'
+    ).join('') + '</div><div class="scale-lab"><span>← 不认同</span><span>认同 →</span></div>';
+  } else {
+    body = '<textarea class="qin" id="qText" maxlength="200" placeholder="' + esc(q.placeholder || '请输入…') + '">' + esc(run.answers[i] || '') + '</textarea>' +
+      '<div class="counter"><span id="cNow">' + (run.answers[i] || '').length + '</span>/200</div>';
+  }
+
+  R().innerHTML = '<div class="r-card">' +
+    headHTML(run.offer.source, run.offer.title, '第 ' + (i + 1) + ' / ' + qs.length + ' 题', '') +
+    '<div class="r-prog"><i style="width:' + (i / qs.length * 100) + '%"></i></div>' +
+    '<div class="r-body">' +
+      '<div class="qno">Q' + (i + 1) + '</div>' +
+      '<h2 class="qtext">' + esc(q.q) + '</h2>' +
+      (q.type === 'multi' ? '<p class="qhint">多选题' + (q.max ? ' · 最多 ' + q.max + ' 项' : '') + '</p>' : '') +
+      body +
+    '</div>' +
+    '<footer class="r-foot">' +
+      (i > 0 ? '<button class="btn ghost" style="flex:0 0 92px" id="prevBtn">上一题</button>' : '') +
+      '<button class="btn primary block" id="nextBtn" ' + (valid(i) ? '' : 'disabled') + '>' +
+        (i === qs.length - 1 ? '提交答卷' : '下一题') + '</button>' +
+    '</footer>' +
+  '</div>';
+
+  $$('#runner .opt, #runner .seg').forEach(b => {
+    b.addEventListener('click', () => pick(parseInt(b.dataset.j, 10)));
+  });
+  const ta = $('#qText');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      run.answers[i] = ta.value;
+      const c = $('#cNow'); if (c) c.textContent = ta.value.length;
+      $('#nextBtn').disabled = !valid(i);
+    });
+    ta.focus();
+  }
+  const pb = $('#prevBtn');
+  if (pb) pb.addEventListener('click', () => { run.idx--; renderQuestion(); });
+  $('#nextBtn').addEventListener('click', nextQ);
+}
+
+function pick(j) {
+  const i = run.idx, q = run.questions[i];
+  if (q.type === 'multi') {
+    let arr = Array.isArray(run.answers[i]) ? run.answers[i].slice() : [];
+    if (arr.indexOf(j) >= 0) arr = arr.filter(x => x !== j);
+    else {
+      if (q.max && arr.length >= q.max) { toast('最多选择 ' + q.max + ' 项'); return; }
+      arr.push(j);
+    }
+    run.answers[i] = arr;
+  } else {
+    run.answers[i] = j;
+  }
+  renderQuestion();
+}
+
+function valid(i) {
+  const q = run.questions[i], a = run.answers[i];
+  if (q.type === 'multi') return Array.isArray(a) && a.length > 0;
+  if (q.type === 'text') return typeof a === 'string' && a.trim().length >= (q.min || 1);
+  return a !== undefined && a !== null;
+}
+
+function nextQ() {
+  if (!valid(run.idx)) { toast('请先完成本题'); return; }
+  if (run.idx === run.questions.length - 1) { submit(); return; }
+  run.idx++;
+  renderQuestion();
+}
+
+let submitting = false;
+async function submit() {
+  if (submitting) return;
+  submitting = true;
+  const btn = $('#nextBtn');
+  btn.disabled = true; btn.textContent = '提交中…';
+  clearInterval(tickId);
+  try {
+    const r = await api('/api/responses', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId: run.sessionId, answers: run.answers })
+    });
+    run.done = true;
+    WALLET = r.wallet;
+    renderResult(r, run.offer);
+    loadWallet();
+  } catch (e) {
+    submitting = false;
+    btn.disabled = false; btn.textContent = '提交答卷';
+    toast(e.message);
+  }
+}
+
+function renderResult(r, offer) {
+  const c = r.commission;
+  const flagged = c.status === 'reviewing';
+  const flagList = (c.flags || []).map(f => '<li>' + esc(flagText(f)) + '</li>').join('');
+  R().innerHTML = '<div class="r-card"><div class="result">' +
+    '<div class="res-icon ' + (flagged ? 'warn' : '') + '">' + (flagged ? '!' : '✓') + '</div>' +
+    '<h2>' + (flagged ? '答卷已提交，待复核' : '提交成功') + '</h2>' +
+    '<p class="res-sub">' + esc(offer.title) + '</p>' +
+    '<div class="res-amt">+¥' + fmt(c.reward) + '</div>' +
+    '<p class="res-note">' + (flagged ? '已冻结，人工复核通过后进入结算' : '已计入待结算，题源确认后解冻') + '</p>' +
+    (flagged ? '<div class="res-flag">⚠ 系统检测到以下异常，本单已转人工复核（通常 24 小时内出结果）：<ul>' + flagList + '</ul></div>' : '') +
+    '<div class="res-actions">' +
+      '<button class="btn primary block" id="againBtn">继续答题</button>' +
+      '<button class="btn ghost block" id="toWalletBtn">查看钱包</button>' +
+    '</div>' +
+  '</div></div>';
+  $('#againBtn').addEventListener('click', () => { closeRunner(); go('hall'); });
+  $('#toWalletBtn').addEventListener('click', () => { closeRunner(); go('wallet'); });
+}
+
+function flagText(f) {
+  const map = {
+    speed: '答题速度异常' + (f.detail ? '（' + f.detail + '）' : ''),
+    attention: '注意力校验未通过',
+    straightline: '答案高度重复' + (f.detail ? '（' + f.detail + '）' : ''),
+    device: '设备指纹异常',
+    duplicate: '重复提交同一问卷'
+  };
+  return map[f.key] || f.key;
+}
+
+/* ================= 钱包 ================= */
+function renderWallet(w, txns) {
+  $('#wBal').textContent = fmt(w.available);
+  $('#wPending').textContent = fmt(w.pending);
+  $('#wWithdrawn').textContent = fmt(w.withdrawn);
+  $('#wDone').textContent = STATS ? STATS.totalCount : '—';
+  $('#wTotal').textContent = '累计收益 ¥' + fmt(w.total) + ' · 待结算 ¥' + fmt(w.pending);
+  $('#chipBal').textContent = '¥' + fmt(w.available);
+  $('#availTxt').textContent = '¥' + fmt(w.available);
+
+  const kindMap = {
+    pending_in: '佣金入账',
+    available_in: '解冻到账',
+    reject_out: '佣金回滚',
+    withdraw_out: '提现',
+    adjust: '调整'
+  };
+
+  $('#records').innerHTML = txns.length ? txns.map(t => {
+    const amt = t.amount;
+    const pos = amt >= 0;
+    return '<div class="rec">' +
+      '<div class="rd" style="background:' + (pos ? '#E8F5F1' : '#F1F4F5') + ';color:' + (pos ? 'var(--ok)' : 'var(--ink2)') + '">' + (pos ? '↓' : '↑') + '</div>' +
+      '<div class="rt"><b>' + esc(t.memo || kindMap[t.kind] || t.kind) + '</b><span>' + timeText(t.createdAt) + ' · ' + (kindMap[t.kind] || t.kind) + '</span></div>' +
+      '<div class="ra"><b style="color:' + (pos ? 'var(--ok)' : 'var(--ink)') + '">' + (pos ? '+' : '') + '¥' + fmt(amt) + '</b></div>' +
+    '</div>';
+  }).join('') : '<div style="padding:26px;text-align:center;color:var(--ink3);font-size:13px">还没有账单，去答一份问卷吧</div>';
+}
+
+function timeText(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const now = new Date();
+  const y = new Date(now); y.setDate(now.getDate() - 1);
+  const hm = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  if (d.toDateString() === now.toDateString()) return '今天 ' + hm;
+  if (d.toDateString() === y.toDateString()) return '昨天 ' + hm;
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + hm;
+}
+
+function renderMe(u) {
+  $('#meName').textContent = u.name;
+  $('#meMeta').textContent = 'ID ' + u.id + ' · ' + (u.phone || '');
+  $('#avatar').textContent = (u.name || '用')[0];
+  $('#meLvl').textContent = u.role === 'admin' ? '运营管理员' : 'Lv.3 银牌调研员 · 信誉分 ' + u.creditScore;
+  $('#inviteCode').textContent = u.inviteCode;
+  $('#mCredit').textContent = u.creditScore;
+  $('#realBadge').textContent = u.realName ? '已认证' : '未认证';
+  if (STATS && WALLET) {
+    $('#mDone').textContent = STATS.totalCount;
+    $('#mRate').textContent = STATS.passRate + '%';
+    $('#mTotal').textContent = '¥' + Math.round(WALLET.total / 100);
+  }
+}
+
+function copyInvite() {
+  const code = $('#inviteCode').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(code).then(() => toast('邀请码已复制：' + code)).catch(() => toast(code));
+  } else toast(code);
+}
+
+/* ================= 提现 / 实名 ================= */
+let payMethod = 'wechat';
+
+function openWithdraw() {
+  if (!WALLET) return;
+  if (!ME || !ME.realName) { toast('请先完成实名认证'); openRealname(); return; }
+  if (WALLET.available < 2000) { toast('可用余额不足 ¥20'); return; }
+
+  $('#sheetHost').innerHTML =
+    '<div class="sheet-wrap" onclick="if(event.target===this)closeSheet()">' +
+      '<div class="sheet">' +
+        '<h3>提现到账</h3>' +
+        '<p class="sub">可用 ¥' + fmt(WALLET.available) + ' · 单笔 ¥20–¥500</p>' +
+        '<div class="amt-in"><span>¥</span><input id="wAmt" type="number" value="' + Math.floor(WALLET.available / 100) + '" min="20" max="500"></div>' +
+        '<div class="pays">' +
+          '<div class="pay-opt on" data-pay="wechat"><span class="pd" style="background:#07C160">微</span>微信零钱</div>' +
+          '<div class="pay-opt" data-pay="alipay"><span class="pd" style="background:#1677FF">支</span>支付宝</div>' +
+        '</div>' +
+        '<div class="sheet-foot">' +
+          '<button class="btn ghost" style="flex:0 0 96px" onclick="closeSheet()">取消</button>' +
+          '<button class="btn primary block" id="wdBtn">确认提现</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  $$('.pay-opt').forEach(p => p.addEventListener('click', () => {
+    payMethod = p.dataset.pay;
+    $$('.pay-opt').forEach(x => x.classList.toggle('on', x === p));
+  }));
+  $('#wdBtn').addEventListener('click', doWithdraw);
+}
+
+function closeSheet() { $('#sheetHost').innerHTML = ''; }
+
+async function doWithdraw() {
+  const cents = Math.round(parseFloat($('#wAmt').value || 0) * 100);
+  const btn = $('#wdBtn');
+  btn.disabled = true; btn.textContent = '处理中…';
+  try {
+    const r = await api('/api/withdrawals', {
+      method: 'POST',
+      body: JSON.stringify({ amount: cents, channel: payMethod })
+    });
+    WALLET = r.wallet;
+    closeSheet();
+    await loadWallet();
+    renderHall();
+    toast('提现 ¥' + fmt(cents) + ' 已到账' + (payMethod === 'wechat' ? '微信零钱' : '支付宝'));
+  } catch (e) {
+    btn.disabled = false; btn.textContent = '确认提现';
+    toast(e.message);
+  }
+}
+
+function openRealname() {
+  if (ME && ME.realName) { toast('已完成实名认证'); return; }
+  $('#sheetHost').innerHTML =
+    '<div class="sheet-wrap" onclick="if(event.target===this)closeSheet()">' +
+      '<div class="sheet">' +
+        '<h3>实名认证</h3>' +
+        '<p class="sub">提现需实名，信息仅用于合规存证</p>' +
+        '<div class="field"><label>真实姓名</label><input id="rnName" placeholder="请输入真实姓名"></div>' +
+        '<div class="field"><label>身份证号</label><input id="rnId" placeholder="18 位身份证号"></div>' +
+        '<div class="sheet-foot" style="margin-top:18px">' +
+          '<button class="btn ghost" style="flex:0 0 96px" onclick="closeSheet()">取消</button>' +
+          '<button class="btn primary block" id="rnBtn">提交认证</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  $('#rnBtn').addEventListener('click', async () => {
+    const name = $('#rnName').value.trim();
+    const idNumber = $('#rnId').value.trim();
+    if (name.length < 2) { toast('请填写真实姓名'); return; }
+    if (idNumber.length < 6) { toast('请填写证件号'); return; }
+    try {
+      await api('/api/me/realname', { method: 'POST', body: JSON.stringify({ name, idNumber }) });
+      ME.realName = true;
+      closeSheet();
+      renderMe(ME);
+      toast('实名认证通过');
+    } catch (e) { toast(e.message); }
+  });
+}
+
+/* ================= 账号安全 ================= */
+/** 踢掉某台设备（由按钮内联调用，避免重复绑定监听器） */
+async function kickSession(sid) {
+  try {
+    await api('/api/auth/sessions/' + sid, { method: 'DELETE' });
+    toast('该设备已下线');
+    await openSecurity();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+/**
+ * 改密码 / 登录设备 / 全端下线。
+ * 改密码会踢掉其他设备——这是密码泄露时用户唯一自救的手段，
+ * 否则「改了密码但攻击者还挂着」就成了假安全。
+ */
+async function openSecurity() {
+  let data;
+  try {
+    data = await api('/api/auth/sessions');
+  } catch (e) {
+    toast(e.message);
+    return;
+  }
+
+  const sessions = data.sessions || [];
+  const listHTML = sessions.length ? sessions.map(s =>
+    '<div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #F1F5F6">' +
+      '<div style="flex:1">' +
+        '<div style="font-size:13px;font-weight:600">' + esc(s.device) + (s.current ? ' <span style="font-size:10.5px;color:#0B6E5F;background:#E8F5F1;padding:1px 6px;border-radius:4px">当前设备</span>' : '') + '</div>' +
+        '<div style="font-size:11.5px;color:#8FA0A6;margin-top:2px">' + esc(s.ip || '—') + ' · 最近活跃 ' + esc((s.lastSeenAt || '').slice(5, 16).replace('T', ' ')) + '</div>' +
+      '</div>' +
+      (s.current ? '' : '<button class="btn ghost" style="padding:6px 12px;font-size:12px;flex:0 0 auto" onclick="kickSession(\'' + s.id + '\')">下线</button>') +
+    '</div>'
+  ).join('') : '<p class="sub">暂无有效会话</p>';
+
+  $('#sheetHost').innerHTML =
+    '<div class="sheet-wrap" onclick="if(event.target===this)closeSheet()">' +
+      '<div class="sheet" style="max-height:86vh;overflow-y:auto">' +
+        '<h3>账号安全</h3>' +
+        '<p class="sub">密码修改后，其他设备上的登录会立即失效</p>' +
+
+        '<div class="sec-head" style="margin:16px 0 8px"><h2 style="font-size:13px">修改密码</h2><span></span></div>' +
+        '<div class="field"><label>原密码</label><input id="secOld" type="password" placeholder="当前密码"></div>' +
+        '<div class="field"><label>新密码</label><input id="secNew" type="password" placeholder="至少 6 位，不能是弱口令"></div>' +
+        '<div class="field"><label>确认新密码</label><input id="secNew2" type="password" placeholder="再输一次"></div>' +
+        '<button class="btn primary block" id="secBtn" style="margin-top:4px">保存新密码</button>' +
+
+        '<div class="sec-head" style="margin:20px 0 4px"><h2 style="font-size:13px">登录设备</h2><span style="font-size:11.5px;color:#8FA0A6">' + sessions.length + ' 台</span></div>' +
+        listHTML +
+
+        '<div style="display:flex;gap:9px;margin-top:16px">' +
+          '<button class="btn ghost" style="flex:1" id="secAllOut">退出所有设备</button>' +
+          '<button class="btn ghost" style="flex:1" onclick="closeSheet()">关闭</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  $('#secBtn').addEventListener('click', async () => {
+    const oldPassword = $('#secOld').value;
+    const newPassword = $('#secNew').value;
+    const again = $('#secNew2').value;
+    if (!oldPassword) { toast('请填写原密码'); return; }
+    if (newPassword !== again) { toast('两次输入的新密码不一致'); return; }
+    if (String(newPassword).length < 6) { toast('新密码至少 6 位'); return; }
+    try {
+      const r = await api('/api/auth/password', { method: 'POST', body: JSON.stringify({ oldPassword, newPassword }) });
+      closeSheet();
+      toast(r.revokedSessions > 0 ? '密码已更新，其他 ' + r.revokedSessions + ' 台设备已下线' : '密码已更新');
+    } catch (e) {
+      toast(e.message);
+    }
+  });
+
+  $('#secAllOut').addEventListener('click', async () => {
+    if (!confirm('将退出所有设备，包括当前设备，需要重新登录。继续？')) return;
+    try {
+      await api('/api/auth/logout-all', { method: 'POST' });
+      localStorage.removeItem('yc_token');
+      location.reload();
+    } catch (e) { toast(e.message); }
+  });
+}
+
+/* ================= 启动 ================= */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && !R().hidden) quitRunner();
+});
+
+(async function init() {
+  if (!token) { showAuth('login'); return; }
+  try {
+    const r = await api('/api/me');
+    ME = r.user; WALLET = r.wallet;
+    await bootData();
+    go('hall');
+    setInterval(() => {
+      if (document.hidden || !token) return;
+      if (view === 'wallet') loadWallet();
+      if (view === 'hall') { loadOffers(); loadWallet(); }
+    }, 15000);
+  } catch (e) {
+    localStorage.removeItem('yc_token');
+    token = '';
+    showAuth('login');
+  }
+})();
+</script>
+</body>
+</html>

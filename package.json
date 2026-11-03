@@ -1,0 +1,18 @@
+{
+  "name": "youchou",
+  "version": "1.0.0",
+  "private": true,
+  "description": "有酬 · 多题源问卷佣金平台（真实全栈实现）",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node --experimental-sqlite --no-warnings server/index.js",
+    "dev": "node --experimental-sqlite --no-warnings --watch server/index.js",
+    "seed": "node --experimental-sqlite --no-warnings server/seed.js --reset",
+    "test": "node --experimental-sqlite --no-warnings --test tests/api.test.js tests/auth.test.js tests/crawl.test.js",
+    "crawl": "node --experimental-sqlite --no-warnings scripts/crawl.js",
+    "smoke": "node scripts/smoke.js"
+  }
+}
