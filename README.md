@@ -39,6 +39,22 @@ npm run crawl    # 抓取真实题源任务（联网，可选；也可以点后�
 
 ---
 
+## 界面预览
+
+**用户端 · 任务大厅**（体验账号登录态，¥49.80 今日可赚 / 7 题源聚合）
+
+![用户端任务大厅](docs/screenshots/user-home.png)
+
+**用户端 · 我的钱包**（可用 / 冻结 / 已提现三态 + 实时账单流水）
+
+![用户端钱包](docs/screenshots/user-wallet.png)
+
+**运营后台 · 经营概览**（RBAC 四角色分权，题源状态 / 佣金支出 / Postback 回调日志）
+
+![运营后台](docs/screenshots/console-dashboard.png)
+
+---
+
 ## 技术栈
 
 刻意选择**零外部依赖**：任何装了 Node 22 的机器 `git clone` 后即可运行，不依赖 npm 源、不依赖原生编译（`better-sqlite3` 在 Windows 上经常编译失败）。
